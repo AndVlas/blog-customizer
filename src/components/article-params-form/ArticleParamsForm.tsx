@@ -22,26 +22,22 @@ import {
 import styles from './ArticleParamsForm.module.scss';
 
 type TArticleParamsForm = {
-	defaultOptions: ArticleStateType;
 	userOptions: (data: ArticleStateType) => void;
 };
 
-export const ArticleParamsForm = ({
-	defaultOptions,
-	userOptions,
-}: TArticleParamsForm) => {
-	const [opened, setOpened] = useState(false);
-	const [option, setOption] = useState(defaultOptions);
+export const ArticleParamsForm = ({ userOptions }: TArticleParamsForm) => {
+	const [isOpened, setIsOpened] = useState(false);
+	const [option, setOption] = useState(defaultArticleState);
 	const ref = useRef<HTMLElement | null>(null);
 
 	useModal({
-		opened,
-		onClose: () => setOpened(false),
+		isOpened,
+		onClose: () => setIsOpened(false),
 		rootRef: ref,
 	});
 
 	const openHandler = () => {
-		opened === false ? setOpened(true) : setOpened(false);
+		isOpened === false ? setIsOpened(true) : setIsOpened(false);
 	};
 
 	const resetOptions = () => {
@@ -54,32 +50,18 @@ export const ArticleParamsForm = ({
 		userOptions(option);
 	};
 
-	const fontFamilyOptionHandler = (value: OptionType) => {
-		setOption({ ...option, fontFamilyOption: value });
-	};
-
-	const fontSizeOptionsHandler = (value: OptionType) => {
-		setOption({ ...option, fontSizeOption: value });
-	};
-
-	const fontColorHandler = (value: OptionType) => {
-		setOption({ ...option, fontColor: value });
-	};
-
-	const backgroundColorHandler = (value: OptionType) => {
-		setOption({ ...option, backgroundColor: value });
-	};
-
-	const contentWidthHandler = (value: OptionType) => {
-		setOption({ ...option, contentWidth: value });
+	const handleOnChange = (field: keyof ArticleStateType) => {
+		return (value: OptionType) => {
+			setOption((prevOption) => ({ ...prevOption, [field]: value }));
+		};
 	};
 
 	return (
 		<>
-			<ArrowButton isOpen={opened} onClick={openHandler} />
+			<ArrowButton isOpen={isOpened} onClick={openHandler} />
 			<aside
 				className={
-					opened === true
+					isOpened === true
 						? `${styles.container} ${styles.container_open}`
 						: styles.container
 				}
@@ -95,33 +77,33 @@ export const ArticleParamsForm = ({
 						selected={option.fontFamilyOption}
 						options={fontFamilyOptions}
 						title='Шрифт'
-						onChange={fontFamilyOptionHandler}
+						onChange={handleOnChange('fontFamilyOption')}
 					/>
 					<RadioGroup
 						selected={option.fontSizeOption}
 						name='font-size'
 						options={fontSizeOptions}
 						title='Размер шрифта'
-						onChange={fontSizeOptionsHandler}
+						onChange={handleOnChange('fontSizeOption')}
 					/>
 					<Select
 						selected={option.fontColor}
 						options={fontColors}
 						title='Цвет шрифта'
-						onChange={fontColorHandler}
+						onChange={handleOnChange('fontColor')}
 					/>
 					<Separator />
 					<Select
 						selected={option.backgroundColor}
 						options={backgroundColors}
 						title='Цвет фона'
-						onChange={backgroundColorHandler}
+						onChange={handleOnChange('backgroundColor')}
 					/>
 					<Select
 						selected={option.contentWidth}
 						options={contentWidthArr}
 						title='Ширина контента'
-						onChange={contentWidthHandler}
+						onChange={handleOnChange('contentWidth')}
 					/>
 					<div className={styles.bottomContainer}>
 						<Button title='Сбросить' htmlType='reset' type='clear' />

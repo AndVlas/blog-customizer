@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 
 type TUseModal = {
-	opened: boolean;
+	isOpened: boolean;
 	onClose: () => void;
 	rootRef: React.RefObject<HTMLElement>;
 };
 
-export function useModal({ opened, onClose, rootRef }: TUseModal) {
+export function useModal({ isOpened, onClose, rootRef }: TUseModal) {
 	useEffect(() => {
 		const clickHandler = (evt: MouseEvent) => {
 			const target = evt.target as HTMLElement;
@@ -20,5 +20,5 @@ export function useModal({ opened, onClose, rootRef }: TUseModal) {
 		return () => {
 			document.removeEventListener('mousedown', clickHandler);
 		};
-	}, [opened, onClose, rootRef]);
+	}, [isOpened, onClose, rootRef]);
 }
